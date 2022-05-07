@@ -1,12 +1,11 @@
 package isaac.dev.authjwt.controller;
 
+import isaac.dev.authjwt.exceptions.ResourceNotFoundException;
 import isaac.dev.authjwt.model.User;
 import isaac.dev.authjwt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 
@@ -26,7 +25,13 @@ public class UserController {
     @PostMapping("/user/register")
     public User createNewUser(@RequestBody User user){
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        System.out.println(user.getPassword());
         return userService.addNewUser(user);
+    }
+
+    @GetMapping("/user/{id}")
+
+    public ResponseEntity getUserById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
+        User user = userService.getUserById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found on ::" + userId));
+        return ResponseEntity.ok().body(user);
     }
 }

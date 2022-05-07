@@ -146,4 +146,5 @@ public class User {
                 ", updatedBy='" + updatedBy + '\'' +
                 '}';
     }
+
 }

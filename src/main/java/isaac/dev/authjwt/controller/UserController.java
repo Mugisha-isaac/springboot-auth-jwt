@@ -17,7 +17,7 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @GetMapping("/user")
+    @GetMapping("/users")
     public List<User> getUsers(){
        return userService.getAllUsers();
     }
@@ -34,4 +34,20 @@ public class UserController {
         User user = userService.getUserById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found on ::" + userId));
         return ResponseEntity.ok().body(user);
     }
+
+    @GetMapping("/user/")
+
+    public ResponseEntity getUserByEmail(@RequestBody String email) throws ResourceNotFoundException{
+        User user = userService.findByEmail(email);
+        System.out.println(user);
+        if(user == null){
+            throw  new ResourceNotFoundException("user with " + email + " not found");
+        }
+        else{
+            return ResponseEntity.ok().body(user);
+        }
+
+    }
+
+
 }

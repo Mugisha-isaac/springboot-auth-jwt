@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +44,11 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User findByEmail(String email) {
-        return  userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
+        if(user == null){
+            throw  new CustomException("User does not exist", HttpStatus.NOT_FOUND);
+        }
+        return  user;
     }
 
 
@@ -63,4 +68,12 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+
+    public User whoami(HttpServletRequest req){
+        return userRepository.findByEmail(jwtTokenProvider.resolveToken(req));
+    }
+
+    public String refresh(String email){
+        return jwtTokenProvider.createToken(email,userRepository.findByEmail(email).getUserRoles());
+    }
 }

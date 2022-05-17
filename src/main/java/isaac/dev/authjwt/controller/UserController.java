@@ -49,5 +49,13 @@ public class UserController {
 
     }
 
-
+    @PutMapping("/user/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId, @RequestBody User newUser) throws ResourceNotFoundException{
+        User user = userService.getUserById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found"));
+        user.setName(newUser.getName());
+        user.setEmail(newUser.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+        final User updatedUser = userService.addNewUser(user);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

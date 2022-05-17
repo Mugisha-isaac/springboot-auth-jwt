@@ -1,25 +1,30 @@
 package isaac.dev.authjwt.service;
 
+import isaac.dev.authjwt.exceptions.CustomException;
 import isaac.dev.authjwt.model.User;
 import isaac.dev.authjwt.repository.UserRepository;
+import isaac.dev.authjwt.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
    @Autowired
    private UserRepository userRepository;
 
-    public UserServiceImpl() {
-        authenticationManager = null;
-    }
+
 
     @Override
     public List<User> getAllUsers() {
@@ -51,7 +56,10 @@ public class UserServiceImpl implements UserService{
     public String signIn(String email, String password) {
         try{
              authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
-             return 
+             return jwtTokenProvider.createToken(email, userRepository.findByEmail(email).getUserRoles());
+        }
+        catch (AuthenticationException e){
+            throw  new CustomException("Invalid email/password provided", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 

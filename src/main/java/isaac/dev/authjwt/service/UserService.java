@@ -13,5 +13,8 @@ public interface UserService {
     User addNewUser(User user);
     User findByEmail(String email);
     void deleteUser(Long userId);
+
+    String signIn(String email,String password);
+
 //    void deleteUser(Long userId);
 }

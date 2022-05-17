@@ -42,7 +42,6 @@ public class UserController {
 
     public ResponseEntity getUserByEmail(@RequestBody String email) throws ResourceNotFoundException{
         User user = userService.findByEmail(email);
-        System.out.println(user);
         if(user == null){
             throw  new ResourceNotFoundException("user with " + email + " not found");
         }

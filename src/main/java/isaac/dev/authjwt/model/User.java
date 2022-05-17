@@ -7,6 +7,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +24,9 @@ public class User {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    List<UserRole> userRoles;
 
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
@@ -46,11 +50,12 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, Date createdAt, Date updatedAt, String createdBy, String updatedBy) {
+    public User(Long id, String name, String email, String password, List<UserRole> userRoles, Date createdAt, Date updatedAt, String createdBy, String updatedBy) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.userRoles = userRoles;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
@@ -87,6 +92,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public Date getCreatedAt() {
@@ -126,12 +139,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && name.equals(user.name) && email.equals(user.email) && password.equals(user.password) && createdAt.equals(user.createdAt) && updatedAt.equals(user.updatedAt) && createdBy.equals(user.createdBy) && updatedBy.equals(user.updatedBy);
+        return id.equals(user.id) && name.equals(user.name) && email.equals(user.email) && password.equals(user.password) && userRoles.equals(user.userRoles) && createdAt.equals(user.createdAt) && updatedAt.equals(user.updatedAt) && createdBy.equals(user.createdBy) && updatedBy.equals(user.updatedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, password, createdAt, updatedAt, createdBy, updatedBy);
+        return Objects.hash(id, name, email, password, userRoles, createdAt, updatedAt, createdBy, updatedBy);
     }
 
     @Override
@@ -140,11 +153,11 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", userRoles=" + userRoles +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", createdBy='" + createdBy + '\'' +
                 ", updatedBy='" + updatedBy + '\'' +
                 '}';
     }
-
 }

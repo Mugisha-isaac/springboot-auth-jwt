@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -57,5 +60,14 @@ public class UserController {
         user.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
         final User updatedUser = userService.addNewUser(user);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public Map<String,Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws Exception{
+        User user = userService.getUserById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found"));
+        userService.deleteUser(userId);
+        Map<String,Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }

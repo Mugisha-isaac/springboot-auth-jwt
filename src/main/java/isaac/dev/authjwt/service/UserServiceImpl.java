@@ -32,13 +32,10 @@ public class UserServiceImpl implements UserService{
         return  userRepository.findByEmail(email);
     }
 
-    @Override
-    public void updateUser(Long userId, User newUser) {
 
+    @Override
+    public void deleteUser(Long userId) {
+      userRepository.deleteById(userId);
     }
 
-//    @Override
-//    public void deleteUser(Long userId) {
-//        userRepository.delete(userId);
-//    }
 }
